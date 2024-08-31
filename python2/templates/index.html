@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reddit Sentiment Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #555;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        .chart-container {
+            width: 45%;
+            display: inline-block;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reddit Sentiment Analysis</h1>
+    <form id="form">
+        <label for="post_id">Reddit Post ID:</label>
+        <input type="text" id="post_id" name="post_id" required>
+        <button type="submit">Analyze</button>
+    </form>
+
+    <div class="chart-container">
+        <h2>Post Sentiment - Pie Chart</h2>
+        <canvas id="postPieChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h2>Post Sentiment - Bar Chart</h2>
+        <canvas id="postBarChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <h2>Comments Sentiment - Line Chart</h2>
+        <canvas id="commentsLineChart"></canvas>
+    </div>
+
+    <script>
+        document.getElementById('form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const postId = document.getElementById('post_id').value;
+            const response = await fetch('/get_post_and_comments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ post_id: postId }),
+            });
+            const data = await response.json();
+
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            const sentimentResponse = await fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ post: data.post, comments: data.comments }),
+            });
+            const sentimentData = await sentimentResponse.json();
+
+            if (sentimentData.error) {
+                alert(sentimentData.error);
+                return;
+            }
+
+            renderPieChart('postPieChart', sentimentData.post_sentiment);
+            renderBarChart('postBarChart', sentimentData.post_sentiment);
+            renderLineChart('commentsLineChart', sentimentData.comments_sentiment);
+        });
+
+        function renderPieChart(canvasId, data) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        data: [data.pos, data.neu, data.neg],
+                        backgroundColor: ['#36a2eb', '#ffcd56', '#ff6384']
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+        }
+
+        function renderBarChart(canvasId, data) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        label: 'Sentiment',
+                        data: [data.pos, data.neu, data.neg],
+                        backgroundColor: ['#36a2eb', '#ffcd56', '#ff6384']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderLineChart(canvasId, data) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{
+                        label: 'Sentiment',
+                        data: [data.pos, data.neu, data.neg],
+                        backgroundColor: '#36a2eb',
+                        borderColor: '#36a2eb',
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
