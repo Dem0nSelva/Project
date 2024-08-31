@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicant</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure the page takes at least the full viewport height */
+        }
+        .container {
+            width: 80%; /* Adjust width of the container */
+        }
+
+        /* Navigation styles */
+        .navbar {
+            background-color: #111;
+            padding: 20px;
+        }
+
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex; /* Use flexbox */
+        }
+
+        .navbar li {
+            margin-right: 20px;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* Content container styles */
+        .content {
+            padding: 50px;
+            align-items: center;
+            flex-grow: 1;  /* Grow to fill remaining vertical space */
+        }
+
+        /* Dark theme specific styles */
+        .dark-theme {
+            background-color: #222;
+            color: #fff;
+        }
+
+        /* Photo grid styles */
+        .photo-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .photo-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px; /* Add margin between photo containers */
+        }
+
+        .photo-container img {
+            max-width: 50%; /* Adjust width of the image */
+        }
+
+        .photo-container .description {
+            width: 50%; /* Adjust width of the description */
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+        }
+
+        /* Adjust position of description for the second photo */
+        .photo-container:nth-child(2) .description {
+            order: -1; /* Move description to the left side */
+        }
+
+        /* Contact details styles */
+        .contact {
+            padding: 20px;
+            text-align: center;
+        }
+         .centered-text {
+            text-align: center;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #111;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto; /* Push the footer to the bottom */
+        }
+
+        /* Styles for error and prediction */
+        .bold-text {
+            font-weight: bold;
+            color: #ff0000; /* Red color for error */
+        }
+
+        .bold-text.prediction {
+            color: #00ff00; /* Green color for prediction */
+        }
+    </style>
+</head>
+<body class="dark-theme">
+
+    <!-- Navigation -->
+    <nav class="navbar">
+    <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/contact">Contact</a></li>
+    </ul>
+</nav>
+
+    <!-- Content -->
+    <div class="centered-text">
+        <h1>Welcome to Medicinal plant classifier</h1>
+        <p>This is used to identify the medicinal plants (available in Tamil Nadu)</p>
+
+        <!-- Photo grid -->
+        <div class="photo-grid">
+            <div class="photo-container">
+                <img src="static/jjjj.jpg" alt="Photo 1">
+                <div class="description">A medicinal plant is a plant that has similar properties to conventional pharmaceutical drugs. A pharmaceutical drug is a drug that is produced in a laboratory to cure or help an illness. Medicinal plants often have antimicrobial properties that prevent bacteria, molds, or other microbes from growing.</div>
+            </div>
+            <div class="photo-container">
+                <div class="description">Medicinal plants like Ashwagandha, Tulsi, Shatavari, am/a, etc. have applications as home remedies to treat various ailments and strengthen the body, or commercially for the synthesis of drugs and cosmetic products.</div>
+                <img src="static/ww.jpg" alt="Photo 2">
+            </div>
+            <div class="photo-container">
+                <img src="static/AI_is_Transforming_Healthcare_Industry_6ebee0776a.jpg" alt="Photo 3">
+                <div class="description">Biofungicides and their applicability in modern agricultural practice. The advantages of using medicinal plants in bioinsecticides formulation include their natural origin and potential effectiveness. However, disadvantages may include limited availability and variability in active compound concentrations.</div>
+            </div>
+            <!-- Add more photos as needed -->
+        </div>
+
+        {% if error %}
+            <p class="bold-text">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <button type="submit">Upload Image</button>
+        </form>
+
+        {% if prediction %}
+            <div class="image-box">
+                <h2 class="bold-text prediction">Predicted: {{ prediction }}</h2>
+                <h3 class="bold-text">Method of preparation: {{ preparation }}</h3>
+                <h4 class="bold-text">Purpose of medicine: {{ uses }}</h4>
+                <img src="{{ file_path }}" alt="Uploaded Image">
+            </div>
+        {% endif %}
+
+        <!-- Contact details -->
+        <div class="contact">
+            <h2>Contact Us</h2>
+            <p>Email: Selvasheeba3085@gmail.com</p>
+            <p>Phone: 979-181-4278</p>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            &copy; 2024 @copyright All rights reserved.
+        </footer>
+    </div>
+
+</body>
+</html>
